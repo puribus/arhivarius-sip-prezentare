@@ -57,6 +57,117 @@ Aplicația utilizează instrumente specializate pentru analiză și validare:
 
 ---
 
-## Status
-Aceasta este o versiune minimalistă a documentației.  
-Va fi extinsă treptat cu detalii tehnice, diagrame și exemple de utilizare.
+## Construcția manifestelor (MI-SIP și ME-SIP)
+
+Generarea pachetului SIP respectă principiile OAIS privind integritatea, verificabilitatea și trasabilitatea informației.  
+Procesul produce două manifeste sincronizate:
+
+- **Manifest Intern (MI-SIP)** – inclus în ZIP, descrie conținutul pachetului.
+- **Manifest Extern (ME-SIP)** – livrat separat, permite verificarea pachetului fără a-l deschide.
+
+Ambele manifeste sunt legate printr-un **hash sincronizat**, iar ME conține suplimentar hash-ul fizic al ZIP-ului final.
+
+---
+
+## Flux OAIS (rezumat)
+
+1. **Identificarea și colectarea fișierelor**  
+   Sistemul scanează folderul selectat, identifică fișierele valide și calculează hash SHA‑256 pentru fiecare.
+
+2. **Construirea MI-SIP (faza preliminară)**  
+   Se generează structura manifestului intern, cu hash-urile individuale ale fișierelor și un câmp placeholder pentru hash-ul pachetului.
+
+3. **Construirea ZIP-ului provizoriu**  
+   ZIP-ul este generat cu toate fișierele + MI-SIP provizoriu.
+
+4. **Calculul hash-ului sincronizat**  
+   Se calculează hash-ul ZIP-ului provizoriu. Acesta devine „ancora” comună MI ↔ ME.
+
+5. **Actualizarea MI-SIP**  
+   Hash-ul sincronizat este injectat în MI-SIP, iar MI este rescris în ZIP.
+
+6. **Generarea ZIP-ului final**  
+   ZIP-ul este reconstruit cu MI actualizat. Se calculează hash-ul fizic al ZIP-ului final.
+
+7. **Construirea ME-SIP**  
+   Manifestul extern include:
+   - hash-ul sincronizat (identic cu MI),
+   - hash-ul fizic al ZIP-ului final,
+   - structura completă a pachetului,
+   - metadate OAIS (sursă, dată, algoritm).
+
+8. **Verificare încrucișată**  
+   Orice modificare a ZIP-ului, MI sau ME produce inconsistențe detectabile imediat.
+
+## Schema fluxului MI → ZIP → ME
+
+Procesul de generare și verificare a pachetului SIP poate fi reprezentat astfel:
+
+                 ┌──────────────────────────┐
+                 │  Scanare fișiere sursă   │
+                 │  + hash individual (SHA) │
+                 └─────────────┬────────────┘
+                               │
+                               ▼
+                 ┌──────────────────────────┐
+                 │   Construire MI-SIP       │
+                 │  (hash_pachet = placeholder)
+                 └─────────────┬────────────┘
+                               │
+                               ▼
+                 ┌──────────────────────────┐
+                 │   ZIP provizoriu         │
+                 │  (fișiere + MI preliminar)│
+                 └─────────────┬────────────┘
+                               │
+                               ▼
+                 ┌──────────────────────────┐
+                 │  Calcul hash sincronizat  │
+                 │  SHA256(ZIP provizoriu)   │
+                 └─────────────┬────────────┘
+                               │
+                               ▼
+                 ┌──────────────────────────┐
+                 │  Actualizare MI-SIP       │
+                 │  (hash_pachet = ancora)   │
+                 └─────────────┬────────────┘
+                               │
+                               ▼
+                 ┌──────────────────────────┐
+                 │   ZIP final               │
+                 │  (fișiere + MI final)     │
+                 └─────────────┬────────────┘
+                               │
+                               ▼
+                 ┌──────────────────────────┐
+                 │  Calcul hash ZIP final    │
+                 │  (amprentă fizică)        │
+                 └─────────────┬────────────┘
+                               │
+                               ▼
+                 ┌──────────────────────────┐
+                 │   Construire ME-SIP       │
+                 │  (hash_pachet = ancora)   │
+                 │  (hash_zip = amprentă)    │
+                 └─────────────┬────────────┘
+                               │
+                               ▼
+                 ┌──────────────────────────┐
+                 │  Verificare încrucișată   │
+                 │  MI ↔ ZIP ↔ ME            │
+                 └──────────────────────────┘
+
+---
+
+### Interpretare
+
+- **MI-SIP** descrie conținutul intern și participă la calculul hash-ului pachetului.  
+- **ZIP provizoriu** permite extragerea hash-ului sincronizat (ancora).  
+- **ZIP final** include MI actualizat și devine obiectul fizic de transfer.  
+- **ME-SIP** descrie pachetul ca obiect OAIS și permite verificarea externă.  
+- **Verificarea încrucișată** asigură detectarea oricărei modificări apărute în transport.
+
+---
+
+
+
