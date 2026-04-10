@@ -241,7 +241,11 @@ Procesul de generare și verificare a pachetului SIP poate fi reprezentat astfel
 - **Verificarea încrucișată** asigură detectarea oricărei modificări apărute în transport.
 
 ---
+## Contribuții
 
+Dezvoltarea aplicației a fost realizată în colaborare cu **Bogdan Florin Popovici** ([pagina personală](https://bogdanpopovici2008.wordpress.com/)), care a avut inițiativa și a definit conceptul general al fluxului. Implementarea tehnică, arhitectura și documentația au fost realizate de **danpura**.
+
+---
 ## Status documentație
 Documentația este în curs de extindere. Vor fi adăugate secțiuni privind:
 - mecanismele de detecție a alterării în transport;
