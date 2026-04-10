@@ -243,7 +243,7 @@ Procesul de generare și verificare a pachetului SIP poate fi reprezentat astfel
 ---
 ## Contribuții
 
-Dezvoltarea aplicației a fost realizată în colaborare cu **Bogdan Florin Popovici** ([pagina personală](https://bogdanpopovici2008.wordpress.com/)), care a avut inițiativa și a definit conceptul general al fluxului. Implementarea tehnică, arhitectura și documentația au fost realizate de **danpura**.
+Dezvoltarea aplicației a fost realizată în colaborare cu **Bogdan Florin Popovici** ([pagina personală](https://bogdanpopovici2008.wordpress.com/)), care a avut inițiativa și a definit conceptul general al fluxului. Implementarea tehnică, arhitectura și documentația au fost realizate de [danpura].
 
 ---
 ## Status documentație
